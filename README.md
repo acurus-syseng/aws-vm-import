@@ -2,29 +2,40 @@
 Scripts to import a VM image to AWS
 
 
-VM Import via AWS CLI
-VM Prerequisites
-•	Disable an A/V on VM
-•	Uninstall VMWare Tools
-•	Disconnect CD-ROM drives
-•	In Windows, set NIC to DHCP rather than static
-•	Ensure RDP is Enabled
-•	All local accounts must have passwords set
-•	Ensure .NET 3.5 or later is installed
-•	Ensure Autologon is not enabled
-•	Ensure no pending MS updates waiting for installation on reboot
-•	Install the following KB’s if applicable
-o	https://support.microsoft.com/en-us/kb/2922223
-o	https://support.microsoft.com/en-us/kb/2800213
-•	Enable RealTimeIsUniversal registry key
-o	HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation
-o	REG_DWORD – RealTimeIsUniversal
-o	Value – 1
+<h1>VM Import via AWS CLI</h1>
 
-Export Process
-1.	Perform a Graceful Shutdown of VM
-2.	Select the Export OVF Template menu option
-3.	Export to desired location, using Format: Single File (OVA)
+<h2>VM Prerequisites</h2>
+
+<ul>
+<li> Disable an A/V on VM </li>
+<li> Uninstall VMWare Tools </li>
+<li> Disconnect CD-ROM drives </li>
+<li> In Windows, set NIC to DHCP rather than static </li>
+<li> Ensure RDP is Enabled </li>
+<li> All local accounts must have passwords set </li>
+<li> Ensure .NET 3.5 or later is installed </li>
+<li> Ensure Autologon is not enabled </li>
+<li> Ensure no pending MS updates waiting for installation on reboot </li>
+<li> Install the following KB’s if applicable </li>
+<ul>
+<li> https://support.microsoft.com/en-us/kb/2922223 </li>
+<li> https://support.microsoft.com/en-us/kb/2800213 </li>
+</ul>
+<li> Enable RealTimeIsUniversal registry key </li>
+<ul> 
+<li> HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\TimeZoneInformation </li>
+<li> REG_DWORD – RealTimeIsUniversal </li>
+<li> Value – 1 </li>
+</ul>
+</ul>
+<br />
+
+<h2>Export Process</h2>
+<ol>
+<li> Perform a Graceful Shutdown of VM </li>
+<li> Select the Export OVF Template menu option </li>
+<li> Export to desired location, using Format: Single File (OVA) </li>
+</ol>
 
 AWS Prerequisites
 •	Create an IAM user with the AdministratorAccess role attached
