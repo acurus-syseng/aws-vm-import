@@ -1,8 +1,5 @@
-# aws-vm-import
+# VM Import via AWS CLI
 Scripts to import a VM image to AWS
-
-
-<h1>VM Import via AWS CLI</h1>
 
 <h2>VM Prerequisites</h2>
 
@@ -37,99 +34,59 @@ Scripts to import a VM image to AWS
 <li> Export to desired location, using Format: Single File (OVA) </li>
 </ol>
 
-AWS Prerequisites
-•	Create an IAM user with the AdministratorAccess role attached
-•	Save the Access Key and Secret Key details – these can only be retrieved once
-•	Create an S3 bucket with an easily identifiable name to upload the OVA templates to
-•	Create below two files in notepad
-o	trust-policy.json
-    - Save into the AWS CLI directory – default: C:\Program Files\Amazon\AWSCLI
-    - Contents listed at end of document
-o	role-policy.json
-    - Save into the AWS CLI directory – default: C:\Program Files\Amazon\AWSCLI
-    - Contents listed at end of document
+<h2>AWS Prerequisites</h2>
+<ul>
+<li> Create an IAM user with the AdministratorAccess role attached </li>
+<li> Save the Access Key and Secret Key details – these can only be retrieved <b>once</b> </li>
+<li> Create an S3 bucket with an easily identifiable name to upload the OVA templates to </li>
+<li> Create below two files in notepad </li>
+<ul>
+<li> trust-policy.json </li>
+<ul>
+<li> Save into the AWS CLI directory – default: C:\Program Files\Amazon\AWSCLI </li>
+<li> Contents listed at end of document </li>
+</ul>
+<li> role-policy.json </li>
+<ul>
+<li> Save into the AWS CLI directory – default: C:\Program Files\Amazon\AWSCLI </li>
+<li> Contents listed at end of document </li>
+</ul>
+</ul>
 
-Import Process
-This procedure assumes the AWS CLI tools have already been installed on the machine that you are using to perform the import. If not:: http://docs.aws.amazon.com/cli/latest/userguide/installing.html#install-msi-on-windows
-The machine being used to do the import should have file access to the exported OVA
-1.	Change to CLI tools directory
-a.	CD “C:\Program Files\Amazon\AWSCLI”
-2.	Configure the AWS Tools for relevant account 
-a.	aws configure
-i.	Access Key: <Saved Access Key>
-ii.	Secret Key: <Saved Secret Key>
-iii.	Region: <Select region code from http://docs.aws.amazon.com/general/latest/gr/rande.html >
-iv.	Default Output: JSON
-3.	Configure Role and Trust policy to allow VM Import
-a.	aws iam create-role --role-name vmimport --assume-role-policy-document file://trust-policy.json
-b.	aws iam put-role-policy --role-name vmimport --policy-name vmimport --policy-document file://role-policy.json
-4.	Upload OVA to S3
-a.	aws s3 cp <local OVA location> s3://<s3 bucket name> --recursive
-5.	Import image from S3 to EC2
-a.	aws ec2 import-image --cli-input-json "{  \"Description\": \"<OVA file Name>\", \"DiskContainers\": [ { \"Description\": \"<OVA file Name>\", \"UserBucket\": { \"S3Bucket\": \"<S3 Bucket Name>\", \"S3Key\" : \"<OVA File Name>\" } } ]}"
-6.	To view the status of the import
-a.	aws ec2 describe-import-image-tasks
+<h2>Import Process</h2>
+This procedure assumes the AWS CLI tools have already been installed on the machine that you are using to perform the import. If not:  <a href>http://docs.aws.amazon.com/cli/latest/userguide/installing.html#install-msi-on-windows</a> </br>
+The machine being used to do the import should have file access to the exported OVA</br>
+<ol>
+<li> Change to CLI tools directory </li>
+<ol type="a">
+<li> CD “C:\Program Files\Amazon\AWSCLI” </li>
+</ol>
+<li> Configure the AWS Tools for relevant account </li>
+<ol type="a">
+<li> aws configure </li>
+<ol type="i">
+<li> Access Key: <Saved Access Key> </li>
+<li> Secret Key: <Saved Secret Key> </li>
+<li> Region: Select region code from http://docs.aws.amazon.com/general/latest/gr/rande.html </li>
+<li> Default Output: JSON </li>
+</ol>
+</ol>
+<li> Configure Role and Trust policy to allow VM Import </li>
+<ol type="i">
+<li> aws iam create-role --role-name vmimport --assume-role-policy-document file://trust-policy.json </li>
+<li> aws iam put-role-policy --role-name vmimport --policy-name vmimport --policy-document file://role-policy.json </li>
+</ol>
+<li> Upload OVA to S3 </li>
+<ol type="a">
+<li> aws s3 cp <local OVA location> s3://<s3 bucket name> --recursive </li>
+</ol>
+<li> Import image from S3 to EC2 </li>
+<ol type="a">
+<li> aws ec2 import-image --cli-input-json "{  \"Description\": \"<OVA file Name>\", \"DiskContainers\": [ { \"Description\": \"<OVA file Name>\", \"UserBucket\": { \"S3Bucket\": \"<S3 Bucket Name>\", \"S3Key\" : \"<OVA File Name>\" } } ]}" </li>
+</ol>
+<li> To view the status of the import </li>
+<ol type="a">
+<li> aws ec2 describe-import-image-tasks </li>
+</ol>
+</ol>
 
-
-JSON File Contents
-trust-policy.json
-{
-   "Version":"2012-10-17",
-   "Statement":[
-      {
-         "Sid":"",
-         "Effect":"Allow",
-         "Principal":{
-            "Service":"vmie.amazonaws.com"
-         },
-         "Action":"sts:AssumeRole",
-         "Condition":{
-            "StringEquals":{
-               "sts:ExternalId":"vmimport"
-            }
-         }
-      }
-   ]
-}
-
-
-
-
-
-
-role-policy.json
-
-{
-   "Version":"2012-10-17",
-   "Statement":[
-      {
-         "Effect":"Allow",
-         "Action":[
-            "s3:ListBucket",
-            "s3:GetBucketLocation"
-         ],
-         "Resource":[
-            "arn:aws:s3:::<S3 Bucket Name>"
-         ]
-      },
-      {
-         "Effect":"Allow",
-         "Action":[
-            "s3:GetObject"
-         ],
-         "Resource":[
-            "arn:aws:s3:::<S3 Bucket Name>/*"
-         ]
-      },
-      {
-         "Effect":"Allow",
-         "Action":[
-            "ec2:ModifySnapshotAttribute",
-            "ec2:CopySnapshot",
-            "ec2:RegisterImage",
-            "ec2:Describe*"
-         ],
-         "Resource":"*"
-      }
-   ]
-}
