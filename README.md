@@ -91,7 +91,7 @@ The machine being used to do the import should have file access to the exported 
 
 <li> Upload OVA to S3 
   <ol type="a">
-    <li> aws s3 cp <local OVA location> s3://<b>s3 bucket name</b> --recursive </li>
+    <li> aws s3 cp <b>local OVA location</b> s3://<b>s3 bucket name</b> --recursive </li>
   </ol>
 </li>
 
